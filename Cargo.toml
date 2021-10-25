@@ -1,0 +1,18 @@
+[package]
+edition = "2021"
+name = "planetarium_check-free-space"
+version = "0.0.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+fs2 = "0.4.3"
+napi = "1"
+napi-derive = "1"
+
+[build-dependencies]
+napi-build = "1"
+
+[profile.release]
+lto = true
