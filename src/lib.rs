@@ -3,45 +3,59 @@
 #[macro_use]
 extern crate napi_derive;
 
-use napi::{CallContext, Env, JsNumber, JsObject, Result, Task};
-
-struct AsyncTask(u32);
-
-impl Task for AsyncTask {
-  type Output = u32;
-  type JsValue = JsNumber;
-
-  fn compute(&mut self) -> Result<Self::Output> {
-    use std::thread::sleep;
-    use std::time::Duration;
-    sleep(Duration::from_millis(self.0 as u64));
-    Ok(self.0 * 2)
-  }
-
-  fn resolve(self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
-    env.create_uint32(output)
-  }
-}
+use fs2::free_space;
+use napi::{CallContext, JsBigint, JsBoolean, JsObject, JsString, JsUnknown, Result, ValueType};
 
 #[module_exports]
 fn init(mut exports: JsObject) -> Result<()> {
-  exports.create_named_method("sync", sync_fn)?;
-
-  exports.create_named_method("sleep", sleep)?;
-  Ok(())
+    exports.create_named_method("getFreeSpace", get_free_space)?;
+    exports.create_named_method("checkFreeSpace", check_free_space)?;
+    Ok(())
 }
 
-#[js_function(1)]
-fn sync_fn(ctx: CallContext) -> Result<JsNumber> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
+// Note: Env::throw_error returns Result<()>, which actually should be: Result<!>.
+// For now, we use unreachable!() to get never type before Rust stablizes never type.
+//
+// See: https://github.com/rust-lang/rust/issues/35121
 
-  ctx.env.create_uint32(argument + 100)
+#[js_function(1)]
+fn get_free_space(ctx: CallContext) -> Result<JsBigint> {
+    let path = ctx.get::<JsString>(0)?.into_utf8()?;
+    if let Ok(size) = free_space(path.as_str()?) {
+        ctx.env.create_bigint_from_u64(size)
+    } else {
+        ctx.env.throw_error("failed", None).map(|_| unreachable!())
+    }
 }
 
-#[js_function(1)]
-fn sleep(ctx: CallContext) -> Result<JsObject> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
-  let task = AsyncTask(argument);
-  let async_task = ctx.env.spawn(task)?;
-  Ok(async_task.promise_object())
+#[js_function(2)]
+fn check_free_space(ctx: CallContext) -> Result<JsBoolean> {
+    let path = ctx.get::<JsString>(0)?.into_utf8()?;
+    let size = ctx.get::<JsUnknown>(1)?;
+
+    let size = match size.get_type()? {
+        ValueType::Number => size.coerce_to_number()?.get_uint32()? as u64,
+        ValueType::String => size
+            .coerce_to_string()?
+            .into_utf8()?
+            .as_str()? // Get str from JsString.
+            .parse::<u64>()
+            .or(ctx
+                .env
+                .throw_error("Non-numerical string in size", None)
+                .map(|_| unreachable!()))?,
+        ValueType::Bigint => unsafe {
+            size.cast::<JsBigint>().get_u64()?.0
+        },
+        _ => ctx
+            .env
+            .throw_error("invalid size type", None)
+            .map(|_| unreachable!())?,
+    };
+
+    if let Ok(free_space) = free_space(path.as_str()?) {
+        ctx.env.get_boolean(free_space >= size)
+    } else {
+        ctx.env.throw_error("failed", None).map(|_| unreachable!())
+    }
 }
