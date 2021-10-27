@@ -212,6 +212,7 @@ jobs:
           else
             echo "Not a release, skipping publish"
           fi
+        if: ${{ github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
