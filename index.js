@@ -1,5 +1,9 @@
 const { loadBinding } = require('@node-rs/helper')
 
+if (!process) {
+  require(require.resolve(`@planetarium/check-free-space-${process}.node`));
+}
+
 /**
  * __dirname means load native addon from current dir
  * 'check-free-space' is the name of native addon
