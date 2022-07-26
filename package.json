@@ -1,6 +1,6 @@
 {
   "name": "@planetarium/check-free-space",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "typings": "index.d.ts",
   "napi": {
     "name": "check-free-space",
