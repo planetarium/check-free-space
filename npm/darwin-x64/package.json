@@ -11,8 +11,10 @@
   "files": [
     "check-free-space.darwin-x64.node"
   ],
+  "description": "Checks free space.",
   "license": "MIT",
   "engines": {
     "node": ">= 10"
-  }
+  },
+  "repository": "https://github.com/planetarium/check-free-space"
 }

@@ -27,5 +27,7 @@
     "prepublishOnly": "napi prepublish -t npm",
     "version": "napi version",
     "test": "uvu tests"
-  }
+  },
+  "repository": "https://github.com/planetarium/check-free-space",
+  "description": "Checks free space."
 }

@@ -11,8 +11,10 @@
   "files": [
     "check-free-space.win32-x64-msvc.node"
   ],
+  "description": "Checks free space.",
   "license": "MIT",
   "engines": {
     "node": ">= 10"
-  }
+  },
+  "repository": "https://github.com/planetarium/check-free-space"
 }
