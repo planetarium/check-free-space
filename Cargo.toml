@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 fs2 = "0.4.3"
 napi = { version = "2", features = ["napi6"] }
-napi-derive = "1"
+napi-derive = "2"
 
 [build-dependencies]
 napi-build = "1"
