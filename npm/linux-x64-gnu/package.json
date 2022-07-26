@@ -11,8 +11,13 @@
   "files": [
     "check-free-space.linux-x64-gnu.node"
   ],
+  "description": "Checks free space.",
   "license": "MIT",
   "engines": {
     "node": ">= 10"
-  }
+  },
+  "repository": "https://github.com/planetarium/check-free-space",
+  "libc": [
+    "glibc"
+  ]
 }

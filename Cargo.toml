@@ -8,11 +8,11 @@ crate-type = ["cdylib"]
 
 [dependencies]
 fs2 = "0.4.3"
-napi = { version = "1", features = ["napi6"] }
-napi-derive = "1"
+napi = { version = "2", features = ["napi6"] }
+napi-derive = "2"
 
 [build-dependencies]
-napi-build = "1"
+napi-build = "2"
 
 [profile.release]
 lto = true

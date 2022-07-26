@@ -1,4 +1,4 @@
-use napi::{Error, JsBigint, JsUnknown, Status, ValueType};
+use napi::{Error, JsBigInt, JsUnknown, Status, ValueType};
 
 pub fn get_u64_from_unknown(unknown: JsUnknown) -> napi::Result<u64> {
     match unknown.get_type()? {
@@ -9,7 +9,7 @@ pub fn get_u64_from_unknown(unknown: JsUnknown) -> napi::Result<u64> {
             .as_str()? // Get str from JsString.
             .parse::<u64>()
             .map_err(|_| Error::new(Status::InvalidArg, "Failed to parse size".to_owned())),
-        ValueType::Bigint => unsafe { Ok(unknown.cast::<JsBigint>().get_u64()?.0) },
+        ValueType::BigInt => unsafe { Ok(unknown.cast::<JsBigInt>().get_u64()?.0) },
         _ => {
             return Err(Error::new(
                 Status::InvalidArg,
