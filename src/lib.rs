@@ -14,12 +14,12 @@ mod utils;
 // See: https://github.com/rust-lang/rust/issues/35121
 
 #[napi]
-fn get_free_space(path: String) -> Result<u64> {
+pub fn get_free_space(path: String) -> Result<u64> {
     Ok(free_space(&path)?)
 }
 
 #[napi]
-fn check_free_space(path: String, size: JsUnknown) -> Result<bool> {
+pub fn check_free_space(path: String, size: JsUnknown) -> Result<bool> {
     let size = get_u64_from_unknown(size)?;
     if let Ok(free_space) = free_space(&path) {
         Ok(free_space >= size)
